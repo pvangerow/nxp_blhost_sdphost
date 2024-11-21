@@ -39,6 +39,8 @@ typedef LONG NTSTATUS;
 
 /*#define HIDAPI_USE_DDK*/
 
+#pragma comment (lib, "Setupapi.lib")
+
 #ifdef __cplusplus
 extern "C" {
 #endif
