@@ -3,9 +3,24 @@ cmake_minimum_required(VERSION 3.24)
 
 # Platform dependent compile definitions (Look at MakeFile)
 add_compile_definitions(
-	WIN32
 	BOOTLOADER_HOST
 )
+
+if (WIN32 OR MSVC)
+	add_compile_definitions(
+		WIN32
+	)
+endif()
+if (UNIX AND NOT APPLE)
+	add_compile_definitions(
+		LINUX
+	)
+endif()
+if (UNIX AND APPLE)
+	add_compile_definitions(
+		MACOSX
+	)
+endif()
 
 # Additional settings
 project(nxp_sdp_host)
