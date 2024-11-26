@@ -3,6 +3,8 @@ cmake_minimum_required(VERSION 3.24)
 project(nxp_sdp_host)
 enable_language(C CXX)
 
+set(CXX_STANDARD C++17)
+
 add_executable(blhost
 	proj/blhost/src/blhost.cpp
 	src/blfwk/src/Bootloader.cpp
@@ -100,8 +102,20 @@ if (UNIX AND APPLE)
         )
         target_sources(blhost PUBLIC src/blfwk/src/hid-mac.c)
         target_sources(sdphost PUBLIC src/blfwk/src/hid-mac.c)
-        target_link_libraries(blhost udev)
-        target_link_libraries(sdphost udev)
+
+		find_library(CORE_FOUNDATION_LIB CoreFoundation)
+		if (NOT CORE_FOUNDATION_LIB)
+			message(FATAL_ERROR "CoreFoundation not found")
+		endif()
+		target_link_libraries(blhost PUBLIC ${CORE_FOUNDATION_LIB})
+		target_link_libraries(sdphost PUBLIC ${CORE_FOUNDATION_LIB})
+
+		find_library(IOKIT_LIB IOKIT)
+		if (NOT IOKIT_LIB)
+			message(FATAL_ERROR "IOKIT not found")
+		endif()
+		target_link_libraries(blhost PUBLIC ${IOKIT_LIB})
+		target_link_libraries(sdphost PUBLIC ${IOKIT_LIB})
 endif()
 
 target_include_directories(blhost PUBLIC

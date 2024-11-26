@@ -212,7 +212,7 @@ status_t SerialPacketizer::ping(
 
                     if (response.crc16 == crc16)
                     {
-                        Log::debug("Framing protocol version = 0x%x, options = 0x%x\n", response.version,
+                        Log::debug("Framing protocol version = 0x%x, options = 0x%x\n", response.version.version,
                                    response.options);
                         m_version = response.version;
                         m_options = response.options;
