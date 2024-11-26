@@ -1,28 +1,5 @@
 cmake_minimum_required(VERSION 3.24)
 
-
-# Platform dependent compile definitions (Look at MakeFile)
-add_compile_definitions(
-	BOOTLOADER_HOST
-)
-
-if (WIN32 OR MSVC)
-	add_compile_definitions(
-		WIN32
-	)
-endif()
-if (UNIX AND NOT APPLE)
-	add_compile_definitions(
-		LINUX
-	)
-endif()
-if (UNIX AND APPLE)
-	add_compile_definitions(
-		MACOSX
-	)
-endif()
-
-# Additional settings
 project(nxp_sdp_host)
 enable_language(C CXX)
 
@@ -54,7 +31,6 @@ add_executable(blhost
 	src/blfwk/src/UsbHidPeripheral.cpp
 	src/blfwk/src/Value.cpp
 	src/blfwk/src/format_string.cpp
-	src/blfwk/src/hid-windows.c
 	src/blfwk/src/jsoncpp.cpp
 	src/blfwk/src/options.cpp
 	src/blfwk/src/serial.c
@@ -90,13 +66,43 @@ add_executable(sdphost
 	src/blfwk/src/UsbHidPeripheral.cpp
 	src/blfwk/src/Value.cpp
 	src/blfwk/src/format_string.cpp
-	src/blfwk/src/hid-windows.c
 	src/blfwk/src/jsoncpp.cpp
 	src/blfwk/src/options.cpp
 	src/blfwk/src/serial.c
 	src/blfwk/src/utils.cpp
 	src/crc/src/crc16.c
 )
+
+# Platform dependent compile definitions (Look at MakeFile)
+add_compile_definitions(
+        BOOTLOADER_HOST
+)
+
+if (WIN32 OR MSVC)
+        add_compile_definitions(
+                WIN32
+        )
+        target_sources(blhost PUBLIC src/blfwk/src/hid-windows.c)
+        target_sources(sdphost PUBLIC src/blfwk/src/hid-windows.c)
+endif()
+if (UNIX AND NOT APPLE)
+        add_compile_definitions(
+                LINUX
+        )
+        target_sources(blhost PUBLIC src/blfwk/src/hid-linux.c)
+        target_sources(sdphost PUBLIC src/blfwk/src/hid-linux.c)
+        target_link_libraries(blhost udev)
+        target_link_libraries(sdphost udev)
+endif()
+if (UNIX AND APPLE)
+        add_compile_definitions(
+                MACOSX
+        )
+        target_sources(blhost PUBLIC src/blfwk/src/hid-mac.c)
+        target_sources(sdphost PUBLIC src/blfwk/src/hid-mac.c)
+        target_link_libraries(blhost udev)
+        target_link_libraries(sdphost udev)
+endif()
 
 target_include_directories(blhost PUBLIC
 	src/
