@@ -94,8 +94,14 @@ if (UNIX AND NOT APPLE)
         )
         target_sources(blhost PUBLIC src/blfwk/src/hid-linux.c)
         target_sources(sdphost PUBLIC src/blfwk/src/hid-linux.c)
-        target_link_libraries(blhost udev)
-        target_link_libraries(sdphost udev)
+
+		find_library(UDEV_LIB libudev)
+		if (NOT UDEV_LIB)
+			message(FATAL_ERROR "Libudev not found")
+		endif()
+
+        target_link_libraries(blhost ${UDEV_LIB})
+        target_link_libraries(sdphost ${UDEV_LIB})
 endif()
 if (UNIX AND APPLE)
         add_compile_definitions(
