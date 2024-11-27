@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.22)
 
 project(nxp_sdp_host)
-enable_language(C CXX)
+enable_language(CXX)
 
 set(CXX_STANDARD C++17)
 
